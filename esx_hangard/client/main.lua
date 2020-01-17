@@ -1,28 +1,6 @@
-local Keys = {
-  ["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57,
-  ["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177,
-  ["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
-  ["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
-  ["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
-  ["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70,
-  ["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
-  ["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
-  ["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
-}
-
-local GUI                     = {}
-local HasAlreadyEnteredMarker = false
-local LastZone                = nil
-local CurrentGarage           = nil
-local PlayerData              = {}
-local CurrentAction           = nil
-local CurrentActionMsg        = ''
-local CurrentActionData       = {}
-local IsInShopMenu            = false
-local Categories              = {}
-local Vehicles                = {}
-local LastVehicles            = {}
-local CurrentVehicleData      = nil
+local GUI, PlayerData, CurrentActionData, Categories, Vehicles, LastVehicles = {}, {}, {}, {}, {}, {}
+local HasAlreadyEnteredMarker, IsInShopMenu = false, false
+local LastZone, CurrentGarage, CurrentAction, CurrentVehicleData, CurrentActionMsg
 local closest                 = 0
 
 ESX                           = nil
@@ -51,9 +29,7 @@ Citizen.CreateThread(function()
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentString("Hangard")
     EndTextCommandSetBlipName(blip)
-
 	end
-
 end)
 
 -- Display markers
@@ -70,9 +46,7 @@ Citizen.CreateThread(function()
       if(GetDistanceBetweenCoords(coords, v.Marker.x, v.Marker.y, v.Marker.z, true) < Config.DrawDistance) then
         DrawMarker(Config.MarkerType, v.Marker.x, v.Marker.y, v.Marker.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.MarkerSize.x, Config.MarkerSize.y, Config.MarkerSize.z, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
       end	
-
 		end
-
 	end
 end)
 
@@ -120,7 +94,7 @@ Citizen.CreateThread(function ()
         DisplayHelpText("Presse ~INPUT_CONTEXT~ pour ~b~OUVRIR~w~ votre hangard")
       end
 
-      if IsControlPressed(0, Keys['E']) and (GetGameTimer() - GUI.Time) > 300 then
+      if IsControlPressed(0, 38) and (GetGameTimer() - GUI.Time) > 300 then
         if CurrentAction == 'parking_menu' then
 
           local coords      = GetEntityCoords(GetPlayerPed(-1))
@@ -146,7 +120,6 @@ Citizen.CreateThread(function ()
                   else
                     DisplayHelpText("Sais pas ton vehicule")
                   end
-
                 end, vehicleProps.plate)
 
                 --WarMenu.OpenMenu('park')
@@ -167,13 +140,10 @@ Citizen.CreateThread(function ()
                       name = GetDisplayNameFromVehicleModel(vehicles[i].model)
                     })
                   end
-
                 end)
 
                 openGui()
-
               end
-
             end
           end
 
@@ -227,7 +197,6 @@ RegisterNUICallback('pullCar', function(data, cb)
         TaskWarpPedIntoVehicle(playerPed,  vehicle,  -1)
         ESX.Game.SetVehicleProperties(vehicle, owned)
       end)
-
   end, data.model)
 
   closeGui()
@@ -252,9 +221,7 @@ Citizen.CreateThread(function()
 	WarMenu.SetMenuBackgroundColor('closeMenu', 0,0,0,220)
 	
   WarMenu.CreateSubMenu('Banger', 'stored', 'Fuckin Banger')
-
 end)
-
 
 function DisplayHelpText(str)
 	BeginTextCommandDisplayHelp("STRING")
@@ -262,11 +229,9 @@ function DisplayHelpText(str)
 	EndTextCommandDisplayHelp(0, 0, 1, -1)
 end
 
-
 AddEventHandler('esx_hangard:hasEnteredMarker', function (zone)
 
     CurrentAction     = 'parking_menu'
-
 end)
 
 AddEventHandler('esx_hangard:hasExitedMarker', function (zone)
@@ -279,5 +244,3 @@ AddEventHandler('esx_hangard:hasExitedMarker', function (zone)
 
   CurrentAction = nil
 end)
-
-
